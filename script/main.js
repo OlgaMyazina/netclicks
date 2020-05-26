@@ -1,5 +1,8 @@
 "use strict";
 
+const IMG_URL = 'https://image.tmdb.org/t/p/w185_and_h278_bestv2';
+const API_KEY = 'bd60be5200cc50b17a865684bf429562';
+
 //меню
 const leftMenu = document.querySelector('.left-menu');
 const hamburger = document.querySelector('.hamburger');
@@ -9,6 +12,49 @@ const tvShowList = document.querySelector('.tv-shows__list');
 
 //модальное окно
 const modal = document.querySelector('.modal');
+
+
+const DBConnect = class {
+  getData = async (url) => {
+    const res = await fetch(url);
+    if (res.ok) {
+      return res.json();
+    } else {
+      throw new Error(`Не удалось получить данные по адресу ${url}`);
+    }
+  };
+  getTestData = () => {
+    return this.getData('test.json');
+  }
+};
+
+//создаём карточку
+const renderCard = response => {
+  tvShowList.textContent = '';
+  response.results.forEach(item => {
+    const {backdrop_path: backdrop, name: title, poster_path: poster, vote_average: vote} = item;
+    const posterImg = poster ? IMG_URL + poster : 'img/no-poster.jpg';
+    const backdropImg = backdrop ? IMG_URL + backdrop : '';
+    const voteElem = vote ? `<span class="tv-card__vote">${vote}</span>` : ``;
+    const card = document.createElement('li');
+    card.classList.add('tv-shows__item');
+
+    card.insertAdjacentHTML('beforeend', `
+        <a href="#" class="tv-card">
+            ${voteElem}
+            <img class="tv-card__img"
+                src="${posterImg}"
+                data-backdrop="${backdropImg}"
+                alt="${title}">
+            <h4 class="tv-card__head">${title}</h4>
+        </a>
+    `);
+    tvShowList.append(card);
+  })
+};
+
+new DBConnect().getTestData().then(renderCard);
+
 
 //открытие/закрытие меню
 
@@ -56,6 +102,7 @@ tvShowList.addEventListener('mouseout', toggleImage);
 
 //открытие модального окна
 tvShowList.addEventListener('click', event => {
+  event.preventDefault();
   const card = event.target.closest('.tv-card');
   if (card) {
     document.body.style.overflow = 'hidden';
@@ -72,4 +119,3 @@ modal.addEventListener('click', event => {
   }
 });
 
-//смена карточки
