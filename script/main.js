@@ -35,3 +35,16 @@ leftMenu.addEventListener('click', event => {
   }
 });
 
+//функция замены картинки
+const toggleImage = (event) => {
+  const newSrc = event.target.getAttribute('data-backdrop');
+  const url = event.target.getAttribute('src');
+  event.target.setAttribute('data-backdrop', url);
+  event.target.setAttribute('src', newSrc);
+};
+
+//наведение на картинку -> замена изображения
+tvCardImgs.forEach(card => {
+  card.addEventListener('mouseover', toggleImage);
+  card.addEventListener('mouseleave', toggleImage);
+});
