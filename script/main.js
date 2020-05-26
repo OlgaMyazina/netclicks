@@ -5,7 +5,10 @@ const leftMenu = document.querySelector('.left-menu');
 const hamburger = document.querySelector('.hamburger');
 
 //картинка
-const tvCardImgs = document.querySelectorAll('.tv-card__img');
+const tvShowList = document.querySelector('.tv-shows__list');
+
+//модальное окно
+const modal = document.querySelector('.modal');
 
 //открытие/закрытие меню
 
@@ -36,15 +39,37 @@ leftMenu.addEventListener('click', event => {
 });
 
 //функция замены картинки
-const toggleImage = (event) => {
-  const newSrc = event.target.getAttribute('data-backdrop');
-  const url = event.target.getAttribute('src');
-  event.target.setAttribute('data-backdrop', url);
-  event.target.setAttribute('src', newSrc);
+const toggleImage = event => {
+  const card = event.target.closest('.tv-shows__item');
+  if (card) {
+    const img = card.querySelector('.tv-card__img');
+    if (img.dataset.backdrop) {
+      [img.src, img.dataset.backdrop] = [img.dataset.backdrop, img.src];
+    }
+  }
 };
 
 //наведение на картинку -> замена изображения
-tvCardImgs.forEach(card => {
-  card.addEventListener('mouseover', toggleImage);
-  card.addEventListener('mouseleave', toggleImage);
+tvShowList.addEventListener('mouseover', toggleImage);
+tvShowList.addEventListener('mouseout', toggleImage);
+
+
+//открытие модального окна
+tvShowList.addEventListener('click', event => {
+  const card = event.target.closest('.tv-card');
+  if (card) {
+    document.body.style.overflow = 'hidden';
+    modal.classList.remove('hide');
+  }
 });
+
+//закрытие модального окна
+modal.addEventListener('click', event => {
+  if (event.target.closest('.cross') ||
+    event.target.classList.contains('modal')) {
+    document.body.style.overflow = '';
+    modal.classList.add('hide');
+  }
+});
+
+//смена карточки
